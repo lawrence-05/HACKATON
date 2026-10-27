@@ -12,6 +12,7 @@ import {
   View,
 } from 'react-native';
 import { Link, useRouter } from 'expo-router';
+import { useVideoPlayer, VideoView } from 'expo-video';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as SecureStore from 'expo-secure-store';
@@ -34,6 +35,12 @@ export default function LoginScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const toast = useToast();
+
+  const player = useVideoPlayer(require('@/assets/main.mp4'), (videoPlayer) => {
+    videoPlayer.loop = true;
+    videoPlayer.muted = true;
+    videoPlayer.play();
+  });
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -119,17 +126,26 @@ export default function LoginScreen() {
   };
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top + SPACING.xl }]}>
-      <KeyboardAvoidingView
-        style={styles.flex}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      >
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-          <ScrollView
-            contentContainerStyle={styles.scrollContent}
-            keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}
-          >
+    <View style={styles.background}>
+      <VideoView
+        style={StyleSheet.absoluteFill}
+        player={player}
+        contentFit="cover"
+        nativeControls={false}
+        pointerEvents="none"
+      />
+      <View style={styles.scrim} pointerEvents="none" />
+      <View style={[styles.container, { paddingTop: insets.top + SPACING.xl }]}>
+        <KeyboardAvoidingView
+          style={styles.flex}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        >
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+            <ScrollView
+              contentContainerStyle={styles.scrollContent}
+              keyboardShouldPersistTaps="handled"
+              showsVerticalScrollIndicator={false}
+            >
             <View style={styles.brand}>
               <View style={styles.logo}>
                 <Image
@@ -236,14 +252,24 @@ export default function LoginScreen() {
           </ScrollView>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
+      </View>
     </View>
   );
 }
 
 const useStyles = makeStyles((COLORS) => StyleSheet.create({
-  container: {
+  background: {
     flex: 1,
     backgroundColor: COLORS.background,
+  },
+  scrim: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: COLORS.background,
+    opacity: 0.55,
+  },
+  container: {
+    flex: 1,
+    backgroundColor: 'transparent',
   },
   flex: {
     flex: 1,
@@ -282,12 +308,13 @@ const useStyles = makeStyles((COLORS) => StyleSheet.create({
     textAlign: 'center',
   },
   card: {
-    backgroundColor: COLORS.card,
+    backgroundColor: `${COLORS.card}40`,
     borderRadius: RADIUS.xl,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: COLORS.cardBorderNeon,
     padding: SPACING.xxl,
     gap: SPACING.lg,
+    overflow: 'hidden',
   },
   title: {
     fontSize: 26,

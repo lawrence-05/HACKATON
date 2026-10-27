@@ -19,7 +19,7 @@
         "android.permission.CAMERA",
         "android.permission.RECORD_AUDIO"
       ],
-      "package": "com.lawrencepauls-team.qrapps"
+      "package": "com.lawrencepaulsteam.hackaton"
     },
     "web": {
       "bundler": "metro",
@@ -48,7 +48,8 @@
           "resizeMode": "contain",
           "backgroundColor": "#000000"
         }
-      ]
+      ],
+      "expo-video"
     ],
     "experiments": {
       "typedRoutes": true
